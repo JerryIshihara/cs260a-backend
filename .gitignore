@@ -1,3 +1,9 @@
+# virtual env
+venv/
+
+# environment variables
+.env
+
 # macOS file
 .DS_Store
 
