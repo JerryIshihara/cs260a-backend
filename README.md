@@ -45,7 +45,13 @@ pip install -r requirements.txt
 
 Create a `.env` file in the project root directory with the necessary environment variables. Use the provided `.env.template` file as a template, and replace the placeholders with your actual values.
 
-### 4. Run the Flask app
+### 4. Create empty sqlite database file
+
+```bash
+mkdir database && touch database/database.db
+```
+
+### 5. Run the Flask app
 
 To run the Flask app, execute the following command:
 
