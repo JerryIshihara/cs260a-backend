@@ -2,9 +2,8 @@ from enum import unique
 from config import db
 import datetime
 
-
-class Classification(db.Model):
-    __tablename__ = "Classification"
+class Speed(db.Model):
+    __tablename__ = "Speed"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String, nullable=False)
     video_key = db.Column(db.String, nullable=False)
@@ -16,9 +15,9 @@ class Classification(db.Model):
 
     # insert a record of video with pose inference
     def insert_video(id, user_id = '', video_key = ''):
-        new_video = Classification(id = id, user_id = user_id, video_key = video_key, csv_path = str(id))
+        new_video = Speed(id = id, user_id = user_id, video_key = video_key, csv_path = str(id))
         db.session.add(new_video)
         db.session.commit()
 
     def query_video(id):
-        return Classification.query.get(id)
+        return Speed.query.get(id)

@@ -1,18 +1,18 @@
 from flask import request, Blueprint, jsonify, Response, flash, url_for, send_from_directory
 from marshmallow import ValidationError
-from model.classification import *
-from schema.classification import ClassificationSchema
+from model.speed import *
+from schema.speed import SpeedSchema
 from config import app, db
-import inference.models.pose_inference as pose_inference
+import inference.models.speed as speed_inference
 import inference.util as infer_util
 
-cls_api = Blueprint("cls_api", __name__, url_prefix="/api/classification")
+cls_api = Blueprint("cls_api", __name__, url_prefix="/api/speed")
 
 def query_video(id):
-    return Classification.query_video(id)
+    return Speed.query_video(id)
 
 def insert_video(id):
-    Classification.insert_video(id)
+    Speed.insert_video(id)
 
 def get_s3_presigned_url(id):
     return infer_util.get_s3_presigned_url(id)
@@ -25,22 +25,22 @@ def cls_crud():
         result = {}
     
         if request.method == "GET":
-            classification = query_video(id)
-            if classification == None:
-                result = {"posts": []}
+            speed = query_video(id)
+            if speed == None:
+                result = {"time": [], 'speed': []}
             else:
-                infer_result = infer_util.get_pose_inference_result(classification.csv_path)
-                result = {"posts": infer_result}
+                infer_result = infer_util.get_pose_inference_result(speed.csv_path)
+                result = infer_result
         
         elif request.method == "POST":
-            classification = query_video(id)
-            if classification != None:
+            speed = query_video(id)
+            if speed != None:
                 result = {}
             else:
                 insert_video(id)
                 url = get_s3_presigned_url(id)
-                inference = pose_inference.pose_inference(url)
-                infer_util.write_pose_inference_result(str(id), inference)
+                inference = speed_inference.get_speed_time_info(url)
+                infer_util.write_speed_inference_result(str(id), inference)
                 result = {}
         return jsonify(result), 200
 
