@@ -14,10 +14,10 @@ class Speed(db.Model):
             setattr(self, key, data[key])
 
     # insert a record of video with pose inference
-    def insert_video(id, user_id = '', video_key = ''):
+    def insert_video(self, id, user_id = '', video_key = ''):
         new_video = Speed(id = id, user_id = user_id, video_key = video_key, csv_path = str(id))
         db.session.add(new_video)
         db.session.commit()
 
-    def query_video(id):
+    def query_video(self, id):
         return Speed.query.get(id)
