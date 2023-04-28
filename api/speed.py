@@ -6,25 +6,29 @@ from config import app, db
 import inference.models.speed as speed_inference
 import inference.util as infer_util
 
-cls_api = Blueprint("cls_api", __name__, url_prefix="/api/speed")
+spd_api = Blueprint("spd_api", __name__, url_prefix="/api/speed")
 
 def query_video(id):
     return Speed.query_video(id)
 
-def insert_video(id):
-    Speed.insert_video(id)
+def insert_video(user_id, video_key):
+    Speed.insert_video(user_id, video_key)
+
+def check_exists(video_key):
+    return Speed.check_exists(video_key)
 
 def get_s3_presigned_url(id):
     return infer_util.get_s3_presigned_url(id)
 
-@cls_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
+@spd_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
 def cls_crud():
     try:
-        id = request.args.get("id")
+        
 
         result = {}
     
         if request.method == "GET":
+            id = request.args.get("id")
             speed = query_video(id)
             if speed == None:
                 result = {"time": [], 'speed': []}
@@ -33,15 +37,17 @@ def cls_crud():
                 result = infer_result
         
         elif request.method == "POST":
-            speed = query_video(id)
-            if speed != None:
+            user_id = request.args.get("user_id")
+            video_key = request.args.get("video_key")
+            if check_exists(video_key):
                 result = {}
             else:
-                insert_video(id)
-                url = get_s3_presigned_url(id)
+                insert_video(user_id, video_key)
+                url = get_s3_presigned_url(video_key)
                 inference = speed_inference.get_speed_time_info(url)
-                infer_util.write_speed_inference_result(str(id), inference)
+                infer_util.write_speed_inference_result(str(video_key), inference)
                 result = {}
+                
         return jsonify(result), 200
 
     except Exception as e:
@@ -50,4 +56,4 @@ def cls_crud():
 
 
 # register routes
-app.register_blueprint(cls_api)
+app.register_blueprint(spd_api)

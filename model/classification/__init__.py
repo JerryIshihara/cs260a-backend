@@ -15,10 +15,16 @@ class Classification(db.Model):
             setattr(self, key, data[key])
 
     # insert a record of video with pose inference
-    def insert_video(self, id, user_id = '', video_key = ''):
-        new_video = Classification(id = id, user_id = user_id, video_key = video_key, csv_path = str(id))
+    @staticmethod
+    def insert_video(user_id, video_key):
+        new_video = Classification(user_id = user_id, video_key = video_key, csv_path = str(video_key))
         db.session.add(new_video)
         db.session.commit()
 
-    def query_video(self, id):
+    @staticmethod
+    def query_video(id):
         return Classification.query.get(id)
+    
+    @staticmethod
+    def check_exists(video_key):
+        return Classification.query.filter_by(video_key=video_key) != None

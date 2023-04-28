@@ -4,7 +4,7 @@ from model.videoComments import *
 from schema.videoComments import videoCommentsSchema
 from config import app, db
 
-cls_api = Blueprint("cls_api", __name__, url_prefix="/api/videoComments")
+comment_api = Blueprint("comment_api", __name__, url_prefix="/api/videoComments")
 
 def insert_video_comment(aws_key: int, user_id: str, comment: str):
     VideoComments.insert_video_comment(aws_key, user_id, comment)
@@ -15,7 +15,7 @@ def delete_comment(comment_key):
 def get_comments(aws_key):
     return VideoComments.get_comments(aws_key)
 
-@cls_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
+@comment_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
 def cls_crud():
     try:
         # id = request.args.get("id")
@@ -50,4 +50,4 @@ def cls_crud():
 
 
 # register routes
-app.register_blueprint(cls_api)
+app.register_blueprint(comment_api)
