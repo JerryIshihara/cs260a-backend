@@ -207,3 +207,4 @@ def get_video_pose_inference(file, model, slot = 30):
 def pose_inference(video):
     # video: random.mp4
     return get_video_pose_inference(video, get_model("checkpoint_"), slot = 30)
+
