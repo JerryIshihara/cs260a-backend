@@ -10,9 +10,9 @@ class Classification(db.Model):
     video_key = db.Column(db.String, nullable=False)
     csv_path = db.Column(db.String, nullable=False)
 
-    def __init__(self, data):
-        for key in data.keys():
-            setattr(self, key, data[key])
+    # def __init__(self, data):
+    #     for key in data.keys():
+    #         setattr(self, key, data[key])
 
     # insert a record of video with pose inference
     @staticmethod

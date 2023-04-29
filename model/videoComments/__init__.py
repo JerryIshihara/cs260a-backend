@@ -1,9 +1,10 @@
 from enum import unique
 from config import db
 import datetime
+import pytz
 
 def get_current_time():
-    return str(datetime.datetime.now())
+    return str(datetime.datetime.now(pytz.timezone('US/Pacific')))
 
 def parse_comment(comment):
     return {'comment_key': comment.comment_key, 'aws_key': comment.aws_key, 'user_id': comment.user_id, 'comment': comment.comment, 'created_at': comment.created_at}
@@ -16,11 +17,11 @@ class VideoComments(db.Model):
     comment = db.Column(db.String, nullable=False)
     created_at = db.Column(db.String, nullable=False)
 
-    def __init__(self, data):
-        for key in data.keys():
-            setattr(self, key, data[key])
+    # def __init__(self, data):
+    #     for key in data.keys():
+    #         setattr(self, key, data[key])
 
-    # insert a record of video with pose inference
+
     @staticmethod
     def insert_video_comment(aws_key, user_id, comment):
         cur_time = get_current_time()

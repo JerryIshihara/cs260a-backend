@@ -15,7 +15,7 @@ def check_available_time(date):
 def delete_booking(id):
     Booking.delete_booking(id)
 
-@bk_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
+@bk_api.route("/", methods=["GET", "POST", "DELETE", "PUT", "VIEW"])
 def cls_crud():
     try:
         result = {}
@@ -38,6 +38,11 @@ def cls_crud():
             # delete_booking
             id = request.args.get("id")
             delete_booking(id)
+
+        elif request.method == "VIEW":
+            user_id = request.args.get("user_id")
+            bookings = Booking.get_bookings(user_id)
+            result = {"bookings": bookings}
 
         return jsonify(result), 200
 

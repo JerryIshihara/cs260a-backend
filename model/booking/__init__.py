@@ -1,6 +1,7 @@
 from enum import unique
 from config import db
 import datetime
+import pytz
 
 fields = ['EBA', 'NCBC']
 court_nums = [6, 4]
@@ -13,6 +14,14 @@ def get_all_available_slots():
 
 all_slots = get_all_available_slots()
 
+def is_past(time):
+    current_time = str(datetime.datetime.now(pytz.timezone('US/Pacific')))
+    date = current_time[:10]
+    hour = int(current_time[11:13])
+    if time['date'] < date: return True
+    if time['date'] == date and time['start_time'] <= hour: return True
+    return False
+
 # get slots that are booked
 def get_occupied_slot(bookings):
     occupied = {}
@@ -23,7 +32,7 @@ def get_occupied_slot(bookings):
         if field_name not in occupied:
             occupied[field_name] = {}
         if court_number not in occupied[field_name]:
-            occupied[field_name][court_number] = {}
+            occupied[field_name][court_number] = set()
         occupied[field_name][court_number].add(start_time)
     return occupied
 
@@ -40,6 +49,9 @@ def filter_slots(all_slots, occupied):
             all_slots[field][court] = temp
     return all_slots
 
+def parse_booking(booking):
+    return {'id': booking.id, 'user_id': booking.user_id, 'field_name': booking.field_name, 'court_number': booking.court_number, 'date': booking.date, 'start_time': booking.start_time}
+
 class Booking(db.Model):
     __tablename__ = "Booking"
     id = db.Column(db.Integer, primary_key=True)
@@ -49,9 +61,9 @@ class Booking(db.Model):
     date = db.Column(db.String, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, data):
-        for key in data.keys():
-            setattr(self, key, data[key])
+    # def __init__(self, data):
+    #     for key in data.keys():
+    #         setattr(self, key, data[key])
 
     @staticmethod
     def book_court(user_id, field_name, court_number, date, start_time):
@@ -61,7 +73,7 @@ class Booking(db.Model):
 
     @staticmethod
     def delete_booking(id):
-        old_booking = db.query.get(id)
+        old_booking = Booking.query.get(id)
         db.session.delete(old_booking)
         db.session.commit()
 
@@ -72,3 +84,20 @@ class Booking(db.Model):
         occupied = get_occupied_slot(bookings)
         filtered_slots = filter_slots(all_slots, occupied)
         return filtered_slots
+    
+    # return all reservation
+    @staticmethod
+    def get_bookings(user_id):
+        bookings: list[Booking] = Booking.query.filter_by(user_id=user_id)
+        if bookings == None:
+            return {"past": [], "future": []}
+        lists = [parse_booking(booking) for booking in bookings]
+        lists = sorted(lists, key = lambda x: (x['date'], x['start_time']))
+        past = []
+        future = []
+        for list in lists:
+            if is_past(list):
+                past.append(list)
+            else:
+                future.append(list)
+        return {"past": past, "future": future}

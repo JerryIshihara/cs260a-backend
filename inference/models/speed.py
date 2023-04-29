@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import lstsq
 import cv2
 import mediapipe as mp
-import util
+from .. import util
 import uuid
 import os
 import matplotlib.pyplot as plt
