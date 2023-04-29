@@ -6,50 +6,27 @@ from config import app, db
 
 bk_api = Blueprint("bk_api", __name__, url_prefix="/api/booking")
 
-def book_court(user_id, field_name, court_number, date, start_time):
-    Booking.book_court(user_id, field_name, court_number, date, start_time)
+# Test connection
+@bk_api.route('/test', methods = ['GET'])
+def test():
+    return jsonify({'message': 'Connection established!'})
 
-def check_available_time(date):
-    return Booking.check_available_time(date)
+# User (user_id) book Court (court_number)
+@bk_api.route('/book', methods = ['POST'])
+def book_court():
+    id = request.form.get('id')
+    user_id = request.form.get('user_id')
+    Booking.book_court(id, user_id)
 
-def delete_booking(id):
-    Booking.delete_booking(id)
+    return jsonify({'message': 'Booking successful!'})
 
-@bk_api.route("/", methods=["GET", "POST", "DELETE", "PUT", "VIEW"])
-def cls_crud():
-    try:
-        result = {}
-    
-        if request.method == "GET":
-            # check_available_time
-            date = request.args.get("date")
-            result = {'avalibility': check_available_time(date)}
-        
-        elif request.method == "POST":
-            # book_court
-            user_id = request.args.get("user_id")
-            field_name = request.args.get("field_name")
-            court_number = request.args.get("court_number")
-            date = request.args.get("date")
-            start_time = request.args.get("start_time")
-            book_court(user_id, field_name, court_number, date, start_time)
+# Search courts by name, name could be null
+@bk_api.route('/search', methods = ['GET'])
+def search_courts():
+    court_name = request.args.get('court_name')
+    available_courts = Booking.get_available_courts(court_name)
 
-        elif request.method == "DELETE":
-            # delete_booking
-            id = request.args.get("id")
-            delete_booking(id)
-
-        elif request.method == "VIEW":
-            user_id = request.args.get("user_id")
-            bookings = Booking.get_bookings(user_id)
-            result = {"bookings": bookings}
-
-        return jsonify(result), 200
-
-    except Exception as e:
-        print(e)
-        return "Server Error", 500
-
+    return jsonify({'courts' : available_courts})
 
 # register routes
 app.register_blueprint(bk_api)
