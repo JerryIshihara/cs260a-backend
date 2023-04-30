@@ -38,5 +38,14 @@ def get_reserved_courts():
 
     return jsonify({'courts' : reserved_courts})
 
+# User cancel Court (id)
+@bk_api.route('/cancel_reserve', methods = ['POST'])
+def cancel_reserve():
+    data = request.get_json()
+    id = data.get('id')
+    Booking.cancel_reserve(id)
+
+    return jsonify({'message': 'Booking successful!'})
+
 # register routes
 app.register_blueprint(bk_api)
