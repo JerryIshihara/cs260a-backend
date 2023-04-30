@@ -11,11 +11,12 @@ bk_api = Blueprint("bk_api", __name__, url_prefix="/api/booking")
 def test():
     return jsonify({'message': 'Connection established!'})
 
-# User (user_id) book Court (court_number)
-@bk_api.route('/book', methods = ['POST'])
+# User (user_id) book Court (id)
+@bk_api.route('/reserve', methods = ['POST'])
 def book_court():
-    id = request.form.get('id')
-    user_id = request.form.get('user_id')
+    data = request.get_json()
+    id = data.get('id')
+    user_id = data.get('user_id')
     Booking.book_court(id, user_id)
 
     return jsonify({'message': 'Booking successful!'})
