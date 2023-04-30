@@ -41,6 +41,13 @@ class Booking(db.Model):
         
         return [court.serialize() for court in available_courts]
     
+    # Search all courts reserved by a User (user_id)
+    @staticmethod
+    def get_reserved_courts(user_id):
+        reserved_courts = Booking.query.filter_by(is_booked=1, user_id=user_id)
+
+        return [court.serialize() for court in reserved_courts]
+
     #Define a function to serialize Booking
     def serialize(self):
         return {

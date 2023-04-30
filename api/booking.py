@@ -29,5 +29,14 @@ def search_courts():
 
     return jsonify({'courts' : available_courts})
 
+
+# Search all courts reserved by a User (user_id)
+@bk_api.route('/getReserve', methods = ['GET'])
+def get_reserved_courts():
+    user_id = request.args.get('user_id')
+    reserved_courts = Booking.get_reserved_courts(user_id)
+
+    return jsonify({'courts' : reserved_courts})
+
 # register routes
 app.register_blueprint(bk_api)
