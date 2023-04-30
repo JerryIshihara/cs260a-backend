@@ -23,7 +23,7 @@ def book_court():
 # Search all available courts by name, name could be null
 @bk_api.route('/search', methods = ['GET'])
 def search_courts():
-    court_name = request.args.get('name')
+    court_name = request.args.get('court_name')
     available_courts = Booking.get_available_courts(court_name)
 
     return jsonify({'courts' : available_courts})
