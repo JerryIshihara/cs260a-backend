@@ -26,9 +26,10 @@ class Booking(db.Model):
 
     # Court (court_number) revervation cancelled
     @staticmethod
-    def cancel_booking(id):
-        booking = Booking.query.get(id)
-        db.session.delete(booking)
+    def cancel_reserve(id):
+        court = Booking.query.get(id)
+        court.is_booked = 0
+        court.user_id = None
         db.session.commit()
 
     # Find courts that are available
