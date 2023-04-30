@@ -10,11 +10,12 @@ class Booking(db.Model):
     field_name = db.Column(db.String, nullable=False)
     court_number = db.Column(db.String, nullable=False)
     date = db.Column(db.String, nullable=False)
-    start_time = db.Column(db.Integer, nullable=False)
+    start_time = db.Column(db.String, nullable=False)
     end_time = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=False)
     is_booked = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String, nullable=False)
 
     # User (user_id) book Court (court_number)
     def book_court(id, user_id):
@@ -32,11 +33,11 @@ class Booking(db.Model):
 
     # Find courts that are available
     @staticmethod
-    def get_available_courts(court_name):
-        if court_name is None or court_name.lower() == "all":
+    def get_available_courts(field_name):
+        if field_name is None or field_name.lower() == "all":
             available_courts = Booking.query.filter_by(is_booked=0)
         else:
-            available_courts = Booking.query.filter_by(is_booked=0, court_name=court_name)
+            available_courts = Booking.query.filter_by(is_booked=0, field_name=field_name)
         
         return [court.serialize() for court in available_courts]
     
@@ -52,5 +53,6 @@ class Booking(db.Model):
             'end_time': self.end_time,
             'address': self.address,
             'is_booked': self.is_booked,
-            'price': self.price
+            'price': self.price,
+            'description': self.description
         }
