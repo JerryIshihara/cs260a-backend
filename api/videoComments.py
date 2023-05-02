@@ -30,9 +30,10 @@ def cls_crud():
         
         elif request.method == "POST":
             # add one comment
-            aws_key = request.args.get("aws_key")
-            user_id = request.args.get("user_id")
-            comment = request.args.get("comment")
+            data = request.get_json()
+            aws_key = data.get("aws_key")
+            user_id = data.get("user_id")
+            comment = data.get("comment")
             insert_video_comment(aws_key, user_id, comment)
             result = {}
         

@@ -1,5 +1,6 @@
 from enum import unique
 from config import db
+from sqlalchemy import desc
 import datetime
 import pytz
 
@@ -38,7 +39,7 @@ class VideoComments(db.Model):
     # return all comments under video with {aws_key}
     @staticmethod
     def get_comments(aws_key):
-        comments: list[VideoComments] = VideoComments.query.filter_by(aws_key=aws_key).order_by(VideoComments.created_at).all()
+        comments: list[VideoComments] = VideoComments.query.filter_by(aws_key=aws_key).order_by(desc(VideoComments.created_at)).all()
         lists = [parse_comment(comment) for comment in comments]
         return lists
 
