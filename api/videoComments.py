@@ -39,7 +39,8 @@ def cls_crud():
         
         elif request.method == "DELETE":
             # delete comment
-            comment_key = request.args.get("comment_key")
+            data = request.get_json()
+            comment_key = data.get("comment_id")
             delete_comment(comment_key)
             result = {}
 
