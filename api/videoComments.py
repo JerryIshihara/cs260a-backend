@@ -6,8 +6,8 @@ from config import app, db
 
 comment_api = Blueprint("comment_api", __name__, url_prefix="/api/videoComments")
 
-def insert_video_comment(aws_key: int, user_id: str, comment: str):
-    VideoComments.insert_video_comment(aws_key, user_id, comment)
+def insert_video_comment(aws_key: int, user_id: str, comment: str, avatar_url: str):
+    VideoComments.insert_video_comment(aws_key, user_id, comment, avatar_url)
 
 def delete_comment(comment_key):
     VideoComments.delete_comment(comment_key)
@@ -34,7 +34,8 @@ def cls_crud():
             aws_key = data.get("aws_key")
             user_id = data.get("user_id")
             comment = data.get("comment")
-            insert_video_comment(aws_key, user_id, comment)
+            avatar_url = data.get("avatar_url")
+            insert_video_comment(aws_key, user_id, comment, avatar_url)
             result = {}
         
         elif request.method == "DELETE":
