@@ -8,33 +8,39 @@ import inference.util as infer_util
 
 cls_api = Blueprint("cls_api", __name__, url_prefix="/api/classification")
 
+
 def query_video(id):
     return Classification.query_video(id)
+
 
 def insert_video(user_id, video_key):
     Classification.insert_video(user_id, video_key)
 
+
 def check_exists(video_key):
     return Classification.check_exists(video_key)
 
+
 def get_s3_presigned_url(id):
     return infer_util.get_s3_presigned_url(id)
+
 
 @cls_api.route("/", methods=["GET", "POST", "DELETE", "PUT"])
 def cls_crud():
     try:
 
         result = {}
-    
+
         if request.method == "GET":
             id = request.args.get("id")
             classification = query_video(id)
             if classification == None:
                 result = {"posts": []}
             else:
-                infer_result = infer_util.get_pose_inference_result(classification.csv_path)
+                infer_result = infer_util.get_pose_inference_result(
+                    classification.csv_path)
                 result = {"posts": infer_result}
-        
+
         elif request.method == "POST":
             user_id = request.args.get("user_id")
             video_key = request.args.get("video_key")
@@ -44,7 +50,8 @@ def cls_crud():
                 insert_video(user_id, video_key)
                 url = get_s3_presigned_url(video_key)
                 inference = pose_inference.pose_inference(url)
-                infer_util.write_pose_inference_result(str(video_key), inference)
+                infer_util.write_pose_inference_result(str(video_key),
+                                                       inference)
                 result = {}
 
         return jsonify(result), 200
