@@ -24,13 +24,6 @@ if not os.path.exists(os.path.join(basedir, "database/database.db")):
                             text=True,
                             shell=True)
 
-# Print the output of the command
-print("Output:", result.stdout)
-
-# Print any errors that occurred
-if result.stderr:
-    print("Error:", result.stderr)
-
 # settup sql-alchemy config
 SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir,
                                                       "database/database.db")
