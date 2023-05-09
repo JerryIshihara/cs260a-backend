@@ -1,6 +1,4 @@
-# Project Name
-
-A brief description of your project.
+# CS260 Backend
 
 ## Prerequisites
 
